@@ -25,7 +25,7 @@
       <!-- Footer (like Reddit actions space) -->
       <div class="d-flex justify-content-between">
         <p class="card-text m-0">
-          Comments ({{ postData.comments.length }})
+          Comments ({{ postData.commentCount || postData.comments.length }})
         </p>
         <router-link :to="{ path: `/posts/${postData._id}` }" class="btn btn-outline-primary btn-sm">
           Read More
