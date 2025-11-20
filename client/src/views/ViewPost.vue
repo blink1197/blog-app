@@ -103,9 +103,9 @@
             </button>
           </div>
 
-          <p v-else class="card-text">
-            Login to write a comment.
-          </p>
+          <router-link v-else class="link-primary" :to="{ path: '/login' }">
+            Login to write a comment
+          </router-link>
 
           <hr>
 
@@ -339,5 +339,9 @@ textarea::placeholder {
 
 .text-primary {
   color: var(--bs-primary) !important;
+}
+
+a {
+  text-decoration: none;
 }
 </style>

@@ -4,8 +4,15 @@ import NavbarComponent from './components/layout/NavbarComponent.vue';
 
 <template>
   <NavbarComponent />
+  <main>
+    <RouterView />
+  </main>
 
-  <RouterView />
 </template>
 
-<style scoped></style>
+<style scoped>
+main {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+</style>

@@ -1,8 +1,14 @@
 <script setup>
 import api from '@/api/api';
 import PostCard from '@/components/PostCard.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { useUserStore } from '@/stores/user';
+import { onBeforeMount, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+
+const router = useRouter();
+const userStore = useUserStore();
+const { isLoggedIn } = userStore
 const posts = reactive({ data: [] });
 const isLoading = ref(false);
 const showCreate = ref(false);
@@ -52,6 +58,10 @@ async function createPost() {
 }
 
 onMounted(fetchAllPosts);
+
+onBeforeMount(() => {
+  if (!isLoggedIn) router.push('/')
+})
 
 
 </script>

@@ -28,7 +28,7 @@ onMounted(fetchAllPosts);
     <!-- Header -->
     <div class="row">
       <div class="col mb-3 text-start">
-        <h1 class="py-1 movies-title">Your feed</h1>
+        <h1 class="py-1 movies-title">What's new</h1>
         <p class="tagline">Checkout the latest posts</p>
       </div>
     </div>

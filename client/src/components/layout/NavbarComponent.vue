@@ -15,7 +15,7 @@
             <router-link :to="{ name: 'home' }" class="nav-link">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link :to="{ name: 'posts' }" class="nav-link">My posts</router-link>
+            <router-link :to="{ name: 'posts' }" class="nav-link" v-if="isLoggedIn">My posts</router-link>
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'register' }" class="nav-link" v-if="!isLoggedIn">Register</router-link>
