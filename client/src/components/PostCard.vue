@@ -22,7 +22,7 @@
 
       <!-- Truncated Content -->
       <p class="card-text">
-        {{ truncatedContent }}s
+        {{ truncatedContent }}
       </p>
 
       <!-- Footer (like Reddit actions space) -->
