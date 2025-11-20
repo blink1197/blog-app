@@ -3,6 +3,7 @@ const {
     addPost,
     getPosts,
     getPostById,
+    getPostsByUserId,
     updatePost,
     deletePost,
     addComment,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 // Posts
 router.get("/", getPosts);
+router.get("/user", verify, getPostsByUserId);
 router.post("/", verify, addPost);
 
 // Comments
