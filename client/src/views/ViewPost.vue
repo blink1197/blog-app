@@ -18,7 +18,7 @@
             <small>
               Posted by:
               <span :style="{ color: '#' + post.userId._id.slice(-6) }">
-                {{ post.userId._id === user.userId ? 'You' : post.userId.username }}
+                {{ post.userId.username }} {{ post.userId._id === user.userId ? '(You)' : '' }}
               </span>
             </small>
             <small>
@@ -108,7 +108,7 @@
             <div v-for="c in post.comments" :key="c._id" class="mb-3 pb-2 border-bottom">
               <strong class="card-text">
                 <span :style="{ color: '#' + c.userId._id.slice(-6) }">
-                  {{ c.userId.username }}
+                  {{ c.userId.username }} {{ c.userId._id === user.userId ? '(You)' : '' }}
                 </span>
               </strong>
               <small class="card-text ms-2">{{ timeAgo(c.createdAt) }}</small>

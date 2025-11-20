@@ -5,7 +5,10 @@
       <div class="d-flex align-ites-center justify-content-between mb-3">
         <small class="card-text">
           Posted by:
-          <span :style="{ color: '#' + postData.userId._id.slice(-6) }">{{ postData.userId.username }}</span>
+          <span :style="{ color: '#' + postData.userId._id.slice(-6) }">
+            {{ postData.userId.username }}
+            {{ postData.userId._id === user.userId ? '(You)' : '' }}
+          </span>
 
         </small>
         <small class="card-text">{{ timeAgo(postData.createdAt) }}</small>
@@ -37,9 +40,13 @@
 </template>
 
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { timeAgo } from '@/utils/date';
 import { computed } from 'vue';
 
+
+const userStore = useUserStore();
+const { user } = userStore;
 const props = defineProps({
   postData: Object,
   maxLength: {
