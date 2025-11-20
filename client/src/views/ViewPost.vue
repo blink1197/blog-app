@@ -18,7 +18,7 @@
             <small>
               Posted by:
               <span :style="{ color: '#' + post.userId._id.slice(-6) }">
-                {{ post.userId.username }}
+                {{ post.userId._id === user.userId ? 'You' : post.userId.username }}
               </span>
             </small>
             <small>
@@ -26,8 +26,54 @@
             </small>
           </div>
 
-          <h3 class="fw-bold card-title">{{ post.title }}</h3>
-          <p class="mt-3 card-text">{{ post.content }}</p>
+          <!-- TITLE + CONTENT -->
+          <div>
+
+            <!-- EDIT MODE -->
+            <div v-if="isEditing">
+              <input v-model="editTitle" class="form-control bg-transparent text-white mb-3" placeholder="Title" />
+
+              <textarea v-model="editContent" class="form-control bg-transparent text-white" rows="5"
+                placeholder="Content"></textarea>
+            </div>
+
+            <!-- VIEW MODE -->
+            <div v-else>
+              <h3 class="fw-bold card-title">{{ post.title }}</h3>
+              <p class="mt-3 card-text">{{ post.content }}</p>
+            </div>
+
+          </div>
+
+
+          <!-- Buttons -->
+          <div class="d-flex justify-content-end mt-3">
+
+            <!-- EDIT BUTTON -->
+            <button class="btn btn-primary me-2" v-if="post.userId._id === user.userId && !isEditing"
+              @click="startEditing">
+              Edit
+            </button>
+
+            <!-- SAVE + CANCEL -->
+            <div v-if="isEditing" class="d-flex gap-2">
+
+              <button class="btn btn-success" @click="saveEdit" :disabled="editLoading">
+                <span v-if="editLoading" class="spinner-border spinner-border-sm"></span>
+                <span v-else>Save</span>
+              </button>
+
+              <button class="btn btn-secondary" @click="cancelEditing" :disabled="editLoading">
+                Cancel
+              </button>
+            </div>
+
+            <!-- DELETE BUTTON -->
+            <button class="btn btn-danger ms-2" v-if="user.isAdmin">
+              Delete
+            </button>
+
+          </div>
 
         </div>
       </div>
@@ -100,36 +146,38 @@ import { timeAgo } from "@/utils/date";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
-// Pinia store
-const { isLoggedIn } = useUserStore();
+// pinia store
+const { isLoggedIn, user } = useUserStore();
 
 const route = useRoute();
 
 const post = ref(null);
 const loading = ref(true);
 
+// editing state
+const isEditing = ref(false);
+const editTitle = ref("");
+const editContent = ref("");
+const editLoading = ref(false);
+
 const newComment = ref("");
 const commentLoading = ref(false);
 
-
-const maxCommentLength = 100; // max characters before truncating
-
-// Track which comments are expanded
+const maxCommentLength = 100;
 const expandedComments = ref({});
 
-// Return truncated comment if not expanded
+// truncation
 function truncatedComment(id, comment) {
   if (expandedComments.value[id]) return comment;
   if (comment.length <= maxCommentLength) return comment;
   return comment.slice(0, maxCommentLength) + "...";
 }
 
-// Toggle comment expansion
 function toggleComment(id) {
   expandedComments.value[id] = !expandedComments.value[id];
 }
 
-// Fetch single post
+// Fetch post
 async function fetchPost() {
   try {
     loading.value = true;
@@ -139,6 +187,41 @@ async function fetchPost() {
     console.error(err);
   } finally {
     loading.value = false;
+  }
+}
+
+// Start editing
+function startEditing() {
+  isEditing.value = true;
+  editTitle.value = post.value.title;
+  editContent.value = post.value.content;
+}
+
+// Cancel editing
+function cancelEditing() {
+  isEditing.value = false;
+}
+
+// Save edited post (PATCH)
+async function saveEdit() {
+  if (!editTitle.value.trim() || !editContent.value.trim()) return;
+
+  try {
+    editLoading.value = true;
+
+    const { data } = await api.patch(`/posts/${route.params.id}`, {
+      title: editTitle.value,
+      content: editContent.value
+    });
+
+    // update UI
+    post.value = data.updatedPost;
+    isEditing.value = false;
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    editLoading.value = false;
   }
 }
 
@@ -153,7 +236,6 @@ async function submitComment() {
       comment: newComment.value
     });
 
-    // Update post
     post.value = data.updatedPost;
 
     newComment.value = "";
