@@ -69,9 +69,15 @@
             </div>
 
             <!-- DELETE BUTTON -->
-            <button class="btn btn-danger ms-2" v-if="user.isAdmin">
+            <button class="btn btn-danger ms-2" v-if="(user.isAdmin || post.userId._id === user.userId) && !isEditing"
+              @click="showDeletePost = true">
               Delete
             </button>
+
+            <!-- Confirmation Modal -->
+            <ConfirmationModal :show="showDeletePost" title="Delete Post"
+              body="Are you sure you want to delete this post? This action cannot be undone." confirmText="Delete"
+              @confirm="deletePost" @cancel="showDeletePost = false" />
 
           </div>
 
@@ -106,12 +112,25 @@
           <!-- Comments List -->
           <div v-if="post.comments.length > 0">
             <div v-for="c in post.comments" :key="c._id" class="mb-3 pb-2 border-bottom">
-              <strong class="card-text">
-                <span :style="{ color: '#' + c.userId._id.slice(-6) }">
-                  {{ c.userId.username }} {{ c.userId._id === user.userId ? '(You)' : '' }}
+              <div class="d-flex align-items-center justify-content-between">
+                <span>
+                  <strong class="card-text">
+                    <span :style="{ color: '#' + c.userId._id.slice(-6) }">
+                      {{ c.userId.username }} {{ c.userId._id === user.userId ? '(You)' : '' }}
+                    </span>
+                  </strong>
+                  <small class="card-text ms-2">{{ timeAgo(c.createdAt) }}</small>
                 </span>
-              </strong>
-              <small class="card-text ms-2">{{ timeAgo(c.createdAt) }}</small>
+
+                <button class="btn btn-outline-danger btn-sm" title="Delete comment" @click="showDeleteComment = true">
+                  <i class="bi bi-trash3"></i>
+                </button>
+
+                <!-- Confirmation Modal for deleting comment -->
+                <ConfirmationModal :show="showDeleteComment" title="Delete Comment"
+                  body="Are you sure you want to delete this comment? This action cannot be undone."
+                  confirmText="Delete" @confirm="deleteComment(c._id)" @cancel="showDeleteComment = false" />
+              </div>
 
               <!-- Truncated Content -->
               <p class="mt-1 card-text">
@@ -141,10 +160,16 @@
 
 <script setup>
 import api from "@/api/api";
+import ConfirmationModal from "@/components/ConfirmationModal.vue";
 import { useUserStore } from "@/stores/user";
 import { timeAgo } from "@/utils/date";
+import { Notyf } from "notyf";
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
+
+const router = useRouter();
+const notyf = new Notyf;
 
 // pinia store
 const { isLoggedIn, user } = useUserStore();
@@ -165,6 +190,10 @@ const commentLoading = ref(false);
 
 const maxCommentLength = 100;
 const expandedComments = ref({});
+
+const showDeletePost = ref(false);
+const showDeleteComment = ref(false);
+const isDeleting = ref(false);
 
 // truncation
 function truncatedComment(id, comment) {
@@ -217,9 +246,11 @@ async function saveEdit() {
     // update UI
     post.value = data.updatedPost;
     isEditing.value = false;
+    notyf.success("Post updated ssuccessfully")
 
   } catch (err) {
     console.error(err);
+    notyf.error("Something went wrong. Please try again.")
   } finally {
     editLoading.value = false;
   }
@@ -243,6 +274,38 @@ async function submitComment() {
     console.error(err);
   } finally {
     commentLoading.value = false;
+  }
+}
+
+// Delete post
+async function deletePost() {
+  try {
+    isDeleting.value = true;
+    await api.delete(`/posts/${post.value._id}`);
+    notyf.success("Post successully deleted");
+    router.push('/posts');
+  } catch (error) {
+    console.error("Error deleting post: ", error)
+    notyf.error("Something went wrong, please try again");
+  } finally {
+    isDeleting.value = false;
+    showDeletePost.value = false;
+  }
+}
+
+// Delete comment
+async function deleteComment(commentId) {
+  try {
+    isDeleting.value = true;
+    const { data } = await api.delete(`/posts/${post.value._id}/comments/${commentId}`);
+    notyf.success("Comment successully deleted");
+    post.value = data.updatedPost;
+  } catch (error) {
+    console.error("Error deleting comment: ", error)
+    notyf.error("Something went wrong, please try again");
+  } finally {
+    isDeleting.value = false;
+    showDeleteComment.value = false;
   }
 }
 
