@@ -122,14 +122,15 @@
                   <small class="card-text ms-2">{{ timeAgo(c.createdAt) }}</small>
                 </span>
 
-                <button class="btn btn-outline-danger btn-sm" title="Delete comment" @click="showDeleteComment = true">
+                <button v-if="user.isAdmin" class="btn btn-outline-danger btn-sm" title="Delete comment"
+                  @click="deleteCommentId = c._id">
                   <i class="bi bi-trash3"></i>
                 </button>
 
                 <!-- Confirmation Modal for deleting comment -->
-                <ConfirmationModal :show="showDeleteComment" title="Delete Comment"
+                <ConfirmationModal :show="deleteCommentId === c._id" title="Delete Comment"
                   body="Are you sure you want to delete this comment? This action cannot be undone."
-                  confirmText="Delete" @confirm="deleteComment(c._id)" @cancel="showDeleteComment = false" />
+                  confirmText="Delete" @confirm="deleteComment(deleteCommentId)" @cancel="deleteCommentId = null" />
               </div>
 
               <!-- Truncated Content -->
@@ -192,7 +193,7 @@ const maxCommentLength = 100;
 const expandedComments = ref({});
 
 const showDeletePost = ref(false);
-const showDeleteComment = ref(false);
+const deleteCommentId = ref(null);
 const isDeleting = ref(false);
 
 // truncation
@@ -298,14 +299,14 @@ async function deleteComment(commentId) {
   try {
     isDeleting.value = true;
     const { data } = await api.delete(`/posts/${post.value._id}/comments/${commentId}`);
-    notyf.success("Comment successully deleted");
+    notyf.success("Comment successfully deleted");
     post.value = data.updatedPost;
   } catch (error) {
-    console.error("Error deleting comment: ", error)
+    console.error(error);
     notyf.error("Something went wrong, please try again");
   } finally {
     isDeleting.value = false;
-    showDeleteComment.value = false;
+    deleteCommentId.value = null;
   }
 }
 
