@@ -3,11 +3,12 @@ const {
     addPost,
     getPosts,
     getPostById,
-    getPostsByUserId,
     updatePost,
     deletePost,
     addComment,
-    deleteComment
+    deleteComment,
+    getPostsOfCurrentUser,
+    getPostsOfUser
 } = require("../controllers/post.controller.js");
 
 const { verify, verifyAdmin } = require("../middleware/auth.js");
@@ -16,8 +17,10 @@ const router = express.Router();
 
 // Posts
 router.get("/", getPosts);
-router.get("/user", verify, getPostsByUserId);
 router.post("/", verify, addPost);
+router.get("/user", verify, getPostsOfCurrentUser);
+router.get("/user/:userId", verify, verifyAdmin, getPostsOfUser);
+
 
 // Comments
 router.post("/:postId/comments", verify, addComment);

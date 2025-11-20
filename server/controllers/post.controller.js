@@ -56,7 +56,7 @@ module.exports.getPostById = async (req, res, next) => {
     }
 };
 
-module.exports.getPostsByUserId = async (req, res, next) => {
+module.exports.getPostsOfCurrentUser = async (req, res, next) => {
     try {
         const userId = req.user.id;
 
@@ -81,6 +81,33 @@ module.exports.getPostsByUserId = async (req, res, next) => {
         next(error);
     }
 };
+
+module.exports.getPostsOfUser = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+
+        // Fetch posts by user
+        const posts = await Post.find({ userId })
+            .populate("userId")
+            .lean();
+
+        // Map to include only comment count instead of full comments
+        const result = posts.map(post => ({
+            _id: post._id,
+            title: post.title,
+            content: post.content,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+            commentCount: post.comments.length, // only count
+            userId: post.userId,
+        }));
+
+        res.status(200).json({ posts: result });
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 
 module.exports.updatePost = async (req, res, next) => {
