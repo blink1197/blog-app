@@ -61,7 +61,9 @@ module.exports.getPostsByUserId = async (req, res, next) => {
         const userId = req.user.id;
 
         // Fetch posts by user
-        const posts = await Post.find({ userId }).lean();
+        const posts = await Post.find({ userId })
+            .populate("userId")
+            .lean();
 
         // Map to include only comment count instead of full comments
         const result = posts.map(post => ({
