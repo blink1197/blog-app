@@ -60,11 +60,21 @@
           <!-- Comments List -->
           <div v-if="post.comments.length > 0">
             <div v-for="c in post.comments" :key="c._id" class="mb-3 pb-2 border-bottom">
-              <strong class="card-text"><span :style="{ color: '#' + c.userId._id.slice(-6) }">{{ c.userId.username
-              }}</span></strong>
+              <strong class="card-text">
+                <span :style="{ color: '#' + c.userId._id.slice(-6) }">
+                  {{ c.userId.username }}
+                </span>
+              </strong>
               <small class="card-text ms-2">{{ timeAgo(c.createdAt) }}</small>
 
-              <p class="mt-1 card-text">{{ c.comment }}</p>
+              <!-- Truncated Content -->
+              <p class="mt-1 card-text">
+                {{ truncatedComment(c._id, c.comment) }}
+                <span v-if="c.comment.length > maxCommentLength" class="text-primary cursor-pointer"
+                  @click="toggleComment(c._id)">
+                  {{ expandedComments[c._id] ? ' Show less' : ' Read more' }}
+                </span>
+              </p>
             </div>
           </div>
 
@@ -100,6 +110,24 @@ const loading = ref(true);
 
 const newComment = ref("");
 const commentLoading = ref(false);
+
+
+const maxCommentLength = 100; // max characters before truncating
+
+// Track which comments are expanded
+const expandedComments = ref({});
+
+// Return truncated comment if not expanded
+function truncatedComment(id, comment) {
+  if (expandedComments.value[id]) return comment;
+  if (comment.length <= maxCommentLength) return comment;
+  return comment.slice(0, maxCommentLength) + "...";
+}
+
+// Toggle comment expansion
+function toggleComment(id) {
+  expandedComments.value[id] = !expandedComments.value[id];
+}
 
 // Fetch single post
 async function fetchPost() {
@@ -156,5 +184,14 @@ textarea::placeholder {
 
 .border-bottom {
   border-color: var(--color-border) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+  user-select: none;
+}
+
+.text-primary {
+  color: var(--bs-primary) !important;
 }
 </style>
