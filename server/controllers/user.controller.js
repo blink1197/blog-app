@@ -66,8 +66,21 @@ module.exports.getProfile = async (req, res, next) => {
 
         // Send user details
         res.status(200).json(user);
+
     } catch (error) {
         next(error);
     }
 };
 
+module.exports.getAllUsers = async (req, res, next) => {
+    try {
+        // Fetch user info from db
+        const users = await User.find({}).select("-password");
+
+        // Send users
+        res.status(200).json(users);
+
+    } catch (error) {
+        next(error);
+    }
+};
