@@ -22,4 +22,8 @@
 .logo {
   height: 32px;
 }
+
+.border-top {
+  border-color: var(--color-border) !important;
+}
 </style>
