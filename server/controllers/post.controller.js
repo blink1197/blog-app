@@ -64,7 +64,9 @@ module.exports.updatePost = async (req, res, next) => {
         const userId = req.user.id;
 
         // Find post
-        const post = await Post.findOne({ _id: postId, userId });
+        const post = await Post.findOne({ _id: postId, userId })
+            .populate("userId") // populate post owner
+            .populate("comments.userId"); // populate each comment's user
         if (!post) throw new AppError("Post not found or unauthorized", 404);
 
 
@@ -136,7 +138,9 @@ module.exports.addComment = async (req, res, next) => {
                 }
             },
             { new: true, runValidators: true }
-        );
+        )
+            .populate("userId") // populate post owner
+            .populate("comments.userId"); // populate each commenst's user
 
         if (!updatedPost) {
             throw new AppError("Post not found", 404);
@@ -165,7 +169,9 @@ module.exports.deleteComment = async (req, res, next) => {
                 }
             },
             { new: true } // return updated document
-        );
+        )
+            .populate("userId") // populate post owner
+            .populate("comments.userId"); // populate each commenst's user
 
         if (!updatedPost) {
             throw new AppError("Post not found", 404);
