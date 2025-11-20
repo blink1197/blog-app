@@ -58,7 +58,7 @@ module.exports.loginUser = async (req, res, next) => {
     }
 }
 
-module.exports.getProfile = async (req, res, next) => {
+module.exports.getProfileOfCurrentUser = async (req, res, next) => {
     try {
         // Fetch user info from db
         const user = await User.findById(req.user.id).select("-password");
@@ -71,6 +71,22 @@ module.exports.getProfile = async (req, res, next) => {
         next(error);
     }
 };
+
+
+module.exports.getProfileOfUserById = async (req, res, next) => {
+    try {
+        // Fetch user info from db
+        const user = await User.findById(req.params.id).select("-password");
+        if (!user) throw new AppError("User not found", 404)
+
+        // Send user details
+        res.status(200).json(user);
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 module.exports.getAllUsers = async (req, res, next) => {
     try {
