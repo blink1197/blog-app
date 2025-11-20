@@ -30,8 +30,17 @@ const router = createRouter({
       component: () => import('../views/PostsView.vue'),
     },
     {
+      path: '/posts/user/:id',
+      component: () => import('../views/UserPostsView.vue')
+    },
+    {
       path: '/posts/:id',
       component: () => import('../views/ViewPost.vue')
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/AdminView.vue'),
     },
     // Catch-all 404 route
     {
