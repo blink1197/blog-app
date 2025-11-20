@@ -102,3 +102,69 @@ module.exports.deletePost = async (req, res, next) => {
         next(error);
     }
 };
+
+module.exports.addComment = async (req, res, next) => {
+    try {
+        const { comment } = req.body;
+        const { postId } = req.params;
+        const userId = req.user.id;
+
+        if (!comment) {
+            throw new AppError("Comment should not be empty", 400);
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {
+                $push: {
+                    comments: {
+                        userId,
+                        comment: comment || ''
+                    }
+                }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedPost) {
+            throw new AppError("Post not found", 404);
+        }
+
+        res.status(200).json({
+            message: "Comment added successfully",
+            updatedPost
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports.deleteComment = async (req, res, next) => {
+    try {
+        const { postId, commentId } = req.params;
+
+        // Remove the comment from the comments array
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            {
+                $pull: {
+                    comments: { _id: commentId }
+                }
+            },
+            { new: true } // return updated document
+        );
+
+        if (!updatedPost) {
+            throw new AppError("Post not found", 404);
+        }
+
+        res.status(200).json({
+            message: "Comment deleted successfully",
+            updatedPost
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
