@@ -13,7 +13,7 @@ import NavbarComponent from './components/layout/NavbarComponent.vue';
 
 <style scoped>
 main {
-  min-height: 90vh;
+  min-height: 95vh;
   max-width: 1024px;
   margin: 0 auto;
 }
