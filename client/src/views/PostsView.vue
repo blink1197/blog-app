@@ -1,0 +1,3 @@
+<template>
+  <h1>Your posts</h1>
+</template>
