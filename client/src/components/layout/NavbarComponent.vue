@@ -18,6 +18,9 @@
             <router-link :to="{ name: 'posts' }" class="nav-link" v-if="isLoggedIn">My posts</router-link>
           </li>
           <li class="nav-item">
+            <router-link :to="{ name: 'admin' }" class="nav-link" v-if="isLoggedIn && isAdmin">Admin</router-link>
+          </li>
+          <li class="nav-item">
             <router-link :to="{ name: 'register' }" class="nav-link" v-if="!isLoggedIn">Register</router-link>
           </li>
           <li class="nav-item">
@@ -38,7 +41,7 @@ import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore();
 const { logout } = userStore;
-const { isLoggedIn } = storeToRefs(userStore);
+const { isLoggedIn, isAdmin } = storeToRefs(userStore);
 
 </script>
 
