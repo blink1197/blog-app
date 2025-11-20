@@ -83,19 +83,27 @@ module.exports.deletePost = async (req, res, next) => {
     try {
         const { postId } = req.params;
         const userId = req.user.id;
+        const isAdmin = req.user.isAdmin;
 
-        // Find and delete only if the post belongs to the user
-        const deletedPost = await Post.findOneAndDelete({
-            _id: postId,
-            userId
-        });
+        let deletedPost;
+
+        if (isAdmin) {
+            // Admin can delete any post
+            deletedPost = await Post.findByIdAndDelete(postId);
+        } else {
+            // Normal user can delete only their own post
+            deletedPost = await Post.findOneAndDelete({
+                _id: postId,
+                userId: userId
+            });
+        }
 
         if (!deletedPost) {
             throw new AppError("Post not found or unauthorized", 404);
         }
 
         res.status(200).json({
-            message: "Post deleted successfully",
+            message: "Post deleted successfully"
         });
 
     } catch (error) {

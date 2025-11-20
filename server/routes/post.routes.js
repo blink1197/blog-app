@@ -24,6 +24,6 @@ router.delete("/:postId/comments/:commentId", verify, verifyAdmin, deleteComment
 // Single post
 router.get("/:postId", getPostById);
 router.patch("/:postId", verify, updatePost);
-router.delete("/:postId", verify, verifyAdmin, deletePost);
+router.delete("/:postId", verify, deletePost);
 
 module.exports = router;
