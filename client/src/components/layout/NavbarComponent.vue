@@ -23,7 +23,7 @@
           <li class="nav-item">
             <router-link :to="{ name: 'login' }" class="nav-link" v-if="!isLoggedIn">Login</router-link>
           </li>
-          <button v-if="isLoggedIn" class="btn btn-link nav-link text-primary text-start" @click="logout">
+          <button v-if="isLoggedIn" class="btn btn-link nav-link text-start" @click="logout">
             Logout
           </button>
         </ul>
@@ -53,5 +53,9 @@ a {
 
 .logo {
   height: 40px;
+}
+
+.router-link-exact-active {
+  color: #0d6efd !important;
 }
 </style>
