@@ -11,7 +11,6 @@ async function fetchAllPosts() {
     isLoading.value = true;
     const { data } = await api.get('/posts');
     posts.data = data.posts
-    console.log(posts.data);
   } catch (error) {
     console.error('Error fetching movies:', error);
   } finally {
