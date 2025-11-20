@@ -27,8 +27,9 @@ const postRoutes = require("./routes/post.routes.js")
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
-
-
+app.get('/ping', (req, res) => {
+    res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
 
 app.use(errorHandler);
 
