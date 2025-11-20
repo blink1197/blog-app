@@ -12,7 +12,7 @@ async function fetchAllPosts() {
     const { data } = await api.get('/posts');
     posts.data = data.posts
   } catch (error) {
-    console.error('Error fetching movies:', error);
+    console.error('Error fetching posts:', error);
   } finally {
     isLoading.value = false;
   }
@@ -24,11 +24,11 @@ onMounted(fetchAllPosts);
 </script>
 
 <template>
-  <main class="container pt-5">
+  <div class="container pt-5">
     <!-- Header -->
     <div class="row">
       <div class="col mb-3 text-start">
-        <h1 class="py-1 movies-title">What's new</h1>
+        <h1 class="py-1 posts-title">What's new</h1>
         <p class="tagline">Checkout the latest posts</p>
       </div>
     </div>
@@ -59,15 +59,11 @@ onMounted(fetchAllPosts);
       </TransitionGroup>
     </Transition>
 
-
-
-
-
-  </main>
+  </div>
 </template>
 
 <style>
-.movies-title {
+.posts-title {
   color: var(--color-heading) !important;
 }
 

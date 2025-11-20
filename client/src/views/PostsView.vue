@@ -19,7 +19,7 @@ async function fetchAllPosts() {
     const { data } = await api.get('/posts/user');
     posts.data = data.posts
   } catch (error) {
-    console.error('Error fetching movies:', error);
+    console.error('Error fetching posts:', error);
   } finally {
     isLoading.value = false;
   }
@@ -67,11 +67,11 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <main class="container pt-5">
+  <div class="container pt-5">
     <!-- Header -->
     <div class="row">
       <div class="col mb-3 text-start">
-        <h1 class="py-1 movies-title">Your Posts</h1>
+        <h1 class="py-1">Your Posts</h1>
         <p class="tagline">Manage your posts</p>
       </div>
     </div>
@@ -137,7 +137,7 @@ onBeforeMount(() => {
 
 
 
-  </main>
+  </div>
 </template>
 
 <style>
