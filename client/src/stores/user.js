@@ -35,7 +35,7 @@ export const useUserStore = defineStore('user', () => {
         token,
         userId: data._id,
         email: data.email,
-        username: data.ussername,
+        username: data.username,
         isAdmin: data.isAdmin
       });
     } catch (error) {
