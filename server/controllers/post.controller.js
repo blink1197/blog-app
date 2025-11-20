@@ -25,7 +25,9 @@ module.exports.addPost = async (req, res, next) => {
 module.exports.getPosts = async (req, res, next) => {
     try {
 
-        const posts = await Post.find({});
+        const posts = await Post.find({})
+            .populate("userId") // populate post owner
+            .populate("comments.userId"); // populate each commenst's user
 
         res.status(200).json({ posts });
 
@@ -39,7 +41,9 @@ module.exports.getPostById = async (req, res, next) => {
     try {
         const { postId } = req.params;
 
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId)
+            .populate("userId") // populate post owner
+            .populate("comments.userId"); // populate each commenst's user
 
         if (!post) {
             throw new AppError("Post not found", 404);
