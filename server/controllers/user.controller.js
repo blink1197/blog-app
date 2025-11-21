@@ -100,3 +100,44 @@ module.exports.getAllUsers = async (req, res, next) => {
         next(error);
     }
 };
+
+module.exports.promoteToAdmin = async (req, res, next) => {
+    try {
+        const { id } = req.params; // get user id
+
+        // Update user and return the new document
+        const user = await User.findByIdAndUpdate(
+            id,
+            { isAdmin: true },
+            { new: true } // return updated user
+        );
+
+        if (!user) throw new AppError("User not found", 404)
+
+        res.status(200).json({ message: "User promoted to admin", user });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+module.exports.revokeAdmin = async (req, res, next) => {
+    try {
+        const { id } = req.params; // get user id
+
+        // Update user and return the new document
+        const user = await User.findByIdAndUpdate(
+            id,
+            { isAdmin: false },
+            { new: true } // return updated user
+        );
+
+        if (!user) throw new AppError("User not found", 404)
+
+        res.status(200).json({ message: "User admin privileges revoked", user });
+
+    } catch (error) {
+        next(error);
+    }
+};

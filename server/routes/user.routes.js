@@ -1,5 +1,13 @@
 const express = require('express');
-const { registerUser, loginUser, getAllUsers, getProfileOfCurrentUser, getProfileOfUserById } = require("../controllers/user.controller.js");
+const {
+    registerUser,
+    loginUser,
+    getAllUsers,
+    getProfileOfCurrentUser,
+    getProfileOfUserById,
+    revokeAdmin,
+    promoteToAdmin
+} = require("../controllers/user.controller.js");
 const { verify, verifyAdmin } = require("../middleware/auth.js");
 
 
@@ -10,7 +18,7 @@ router.post("/login", loginUser);
 router.get("/all", verify, verifyAdmin, getAllUsers);
 router.get("/details", verify, getProfileOfCurrentUser);
 router.get("/details/:id", verify, verifyAdmin, getProfileOfUserById);
-
-
+router.patch("/:id/revoke-admin", verify, verifyAdmin, revokeAdmin);
+router.patch("/:id/set-as-admin", verify, verifyAdmin, promoteToAdmin);
 
 module.exports = router;
